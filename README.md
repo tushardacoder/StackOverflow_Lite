@@ -770,8 +770,82 @@ GET  /api/votes/available-answer-for-vote
 
 # User Profile
 
-```http
+```
+# Get User Profile API
+
+## Endpoint
+
+```http id="6n2i8v"
 GET /api/userprofile
+```
+
+---
+
+## Authorization
+
+This endpoint requires JWT authentication.
+
+```http id="4b5qrm"
+Authorization: Bearer your-jwt-token
+```
+
+---
+
+## Example cURL Request
+
+```bash id="m1t4yo"
+curl -X 'GET' \
+  'http://localhost:8080/api/userprofile' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiJkMzc3ZmIwNi00M2EzLTQyOTUtOWM4ZC05NjI2MjJhYzEzOTAiLCJlbWFpbCI6InR1c2hhcmJhc2FrMDQxQGdtYWlsLmNvbSIsImV4cCI6MTc4MjQ3OTE5N30.DX7v0CvONPtK3dY5rt4JOO_TbXe_oVPPDmq_kqPCftg'
+```
+
+---
+
+## Request URL
+
+```text id="tr9xg5"
+http://localhost:8080/api/userprofile
+```
+
+---
+
+## Success Response
+
+### Status Code
+
+```http id="7cy9gq"
+200 OK
+```
+
+### Response Body
+
+```json id="0h0p0h"
+{
+  "userId": "d377fb06-43a3-4295-9c8d-962622ac1390",
+  "reputationScore": 5
+}
+```
+
+---
+
+## Response Headers
+
+```http id="zwqqea"
+content-type: application/json; charset=utf-8
+date: Fri, 26 Jun 2026 12:10:14 GMT
+server: Kestrel
+transfer-encoding: chunked
+```
+
+---
+
+## Responses
+
+| Status Code | Description |
+| ----------- | ----------- |
+| 200         | OK          |
+
 ```
 
 ---

@@ -955,14 +955,352 @@ Authorization: Bearer YOUR_TOKEN
 # Answers Endpoints
 
 ```http
-POST   /api/answers
-PUT    /api/answers
-DELETE /api/answers/{id}
+# Answers API Documentation
 
-GET    /api/answers/question/{questionId}
-GET    /api/answers/my
+## Base URL
 
-PUT    /api/answers/accept-answer
+```http
+http://localhost:8080/api/answers
+```
+
+---
+
+# Endpoints
+
+## Create Answer
+
+### `POST /api/answers`
+
+Create a new answer for a question.
+
+### Authorization
+
+Bearer Token Required
+
+### Request Body
+
+```json
+{
+  "questionId": "a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44",
+  "content": "ansfrom041"
+}
+```
+
+### cURL Request
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8080/api/answers' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "questionId": "a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44",
+  "content": "ansfrom041"
+}'
+```
+
+### Success Response
+
+```json
+"a44e0f03-2d17-4da9-bf93-ad5d92badf7e"
+```
+
+---
+
+# Get Questions Available For Answer
+
+## `GET /api/answers/available-for-answer`
+
+Retrieve all questions that are available for answering.
+
+### Authorization
+
+Bearer Token Required
+
+### cURL Request
+
+```bash
+curl -X 'GET' \
+  'http://localhost:8080/api/answers/available-for-answer' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+### Success Response
+
+```json
+[
+  {
+    "questionId": "a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44",
+    "title": "string",
+    "description": "string",
+    "tagName": "string",
+    "acceptedAnswer": false,
+    "createdAt": "2026-06-25T09:43:52.410205Z"
+  }
+]
+```
+
+---
+
+# Get My Answers
+
+## `GET /api/answers/my`
+
+Retrieve all answers created by the authenticated user.
+
+### Authorization
+
+Bearer Token Required
+
+### cURL Request
+
+```bash
+curl -X 'GET' \
+  'http://localhost:8080/api/answers/my' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+### Success Response
+
+```json
+[
+  {
+    "answerId": "a44e0f03-2d17-4da9-bf93-ad5d92badf7e",
+    "questionId": "a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44",
+    "content": "ansfrom041",
+    "isAccepted": true,
+    "createdAt": "2026-06-26T12:41:54.925825Z"
+  }
+]
+```
+
+---
+
+# Update Answer
+
+## `PUT /api/answers`
+
+Update an existing answer.
+
+### Authorization
+
+Bearer Token Required
+
+### Request Body
+
+```json
+{
+  "answerId": "a44e0f03-2d17-4da9-bf93-ad5d92badf7e",
+  "content": "AnsFrom041"
+}
+```
+
+### cURL Request
+
+```bash
+curl -X 'PUT' \
+  'http://localhost:8080/api/answers' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "answerId": "a44e0f03-2d17-4da9-bf93-ad5d92badf7e",
+  "content": "AnsFrom041"
+}'
+```
+
+### Success Response
+
+```json
+{
+  "message": "Answer updated successfully."
+}
+```
+
+---
+
+# Get Answers By Question ID
+
+## `GET /api/answers/question/{questionId}`
+
+Retrieve accepted and other answers for a specific question.
+
+### Path Parameter
+
+| Parameter  | Type | Description |
+| ---------- | ---- | ----------- |
+| questionId | UUID | Question ID |
+
+### Authorization
+
+Bearer Token Required
+
+### cURL Request
+
+```bash
+curl -X 'GET' \
+  'http://localhost:8080/api/answers/question/a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+### Success Response
+
+```json
+{
+  "message": "Accepted answer found",
+  "acceptedAnswer": {
+    "answerId": "a44e0f03-2d17-4da9-bf93-ad5d92badf7e",
+    "questionId": "a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44",
+    "content": "AnsFrom041",
+    "isAccepted": true,
+    "createdAt": "2026-06-26T12:41:54.925825Z"
+  },
+  "otherAnswers": []
+}
+```
+
+---
+
+# Accept Answer
+
+## `PUT /api/answers/accept-answer`
+
+Accept an answer for a question and Question owner can accept this answer
+
+### Authorization
+
+Bearer Token Required
+
+### Request Body
+
+```json
+{
+  "answerId": "a44e0f03-2d17-4da9-bf93-ad5d92badf7e"
+}
+```
+
+### cURL Request
+
+```bash
+curl -X 'PUT' \
+  'http://localhost:8080/api/answers/accept-answer' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "answerId": "a44e0f03-2d17-4da9-bf93-ad5d92badf7e"
+}'
+```
+
+### Success Response
+
+```json
+{
+  "message": "Answer accepted successfully."
+}
+```
+
+---
+
+# Already Accepted Error
+
+### Error Response
+
+```json
+[
+  {
+    "code": "Answer.AlreadyAccepted",
+    "description": "This answer is already accepted.",
+    "type": 3,
+    "numericType": 3,
+    "metadata": null
+  }
+]
+```
+
+### Status Code
+
+```http
+400 Bad Request
+```
+
+---
+
+# Delete Answer
+
+## `DELETE /api/answers/{id}`
+
+Delete an answer by ID by authenticated user
+
+### Path Parameter
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| id        | UUID | Answer ID   |
+
+### Authorization
+
+Bearer Token Required
+
+### cURL Request
+
+```bash
+curl -X 'DELETE' \
+  'http://localhost:8080/api/answers/{id}' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+### Success Response
+
+```json
+{
+  "message": "Answer deleted successfully."
+}
+```
+
+---
+
+# Authentication Rules
+
+* All protected endpoints require a valid JWT Bearer Token.
+* Users must register and log in before accessing protected APIs.
+* Tokens must be included in the `Authorization` header.
+
+Example:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+---
+
+# Response Status Codes
+
+| Status Code | Description                    |
+| ----------- | ------------------------------ |
+| 200         | Request completed successfully |
+| 400         | Bad request                    |
+| 401         | Unauthorized                   |
+| 404         | Resource not found             |
+| 500         | Internal server error          |
+
+---
+
+# Business Rules
+
+* Users cannot answer their own questions.
+* A question can only have one accepted answer.
+* Accepted answers cannot be accepted again.
+* Only the owner of an answer can update or delete it.
+* Only the question owner can accept an answer.
+
+---
+
 ```
 
 ---

@@ -1322,7 +1322,8 @@ http://localhost:8080/api/votes
 
 ## `GET /api/votes/myquestion`
 
-Retrieve all questions created by the authenticated user.
+Retrieve all questions of an authenticated user .
+
 
 ### Authorization
 
@@ -1358,7 +1359,8 @@ curl -X 'GET' \
 
 ## `GET /api/votes/question/{questionId}`
 
-Retrieve accepted and other answers for a specific question.
+Retrieve all answers of a specific question that the authenticated user is allowed to vote on.
+
 
 ### Path Parameter
 
@@ -1401,7 +1403,7 @@ curl -X 'GET' \
 
 ## `POST /api/votes/answer/upvote`
 
-Upvote an answer.
+Upvote an answer.Authenticate user can't vote own answer
 
 ### Authorization
 
@@ -1442,7 +1444,7 @@ curl -X 'POST' \
 
 ## `POST /api/votes/answer/downvote`
 
-Downvote an answer.
+Downvote an answer.Authenticate user can't vote own answer
 
 ### Authorization
 
@@ -1483,7 +1485,7 @@ curl -X 'POST' \
 
 ## `GET /api/votes/available-answer-for-vote`
 
-Retrieve all questions available for voting.
+Retrieve all question that the authenticated user is allowed to vote on.
 
 ### Authorization
 
@@ -1519,7 +1521,7 @@ curl -X 'GET' \
 
 ## `POST /api/votes/question/downvote`
 
-Downvote a question.
+Downvote a question.Authenticate user can't vote own answer
 
 ### Authorization
 
@@ -1560,7 +1562,7 @@ curl -X 'POST' \
 
 ## `POST /api/votes/question/upvote`
 
-Upvote a question.
+Upvote a question.Authenticate user can't vote own answer
 
 ### Authorization
 

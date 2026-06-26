@@ -12,9 +12,38 @@ A Clean Architecture-based Q&A platform inspired by StackOverflow where users ca
 - JWT Authentication
 - Secure Login System
 - Protected Endpoints
-- User Profile Retrieval
-- Reputation Tracking
 
+### Rules
+
+- Users must register before accessing protected APIs
+- Registered users can log in using email and password
+- Successful login returns a JWT access token
+- JWT token must be included in authenticated requests
+
+### Authorization Header
+
+```http
+Authorization: Bearer <jwt-token>
+```
+
+- Unauthenticated users cannot:
+  - Create questions
+  - Post answers
+  - Vote on content
+  - Accept answers
+  - Access protected user data
+
+- Only authenticated users can:
+  - Create and manage their own content
+  - Vote on questions and answers
+  - View their profile and reputation
+
+- Users can only modify or delete content they created themselves
+- Invalid or expired JWT tokens are rejected
+- Passwords are securely hashed before storing in the database
+- Sensitive endpoints are protected using authorization middleware
+- User identity is extracted from JWT claims
+- Authentication state is stateless and token-based
 ---
 
 ## Questions
@@ -37,6 +66,7 @@ Authenticated users can:
 - Question must contain:
   - Title
   - Description
+  - TagName
 - Only the author can edit/delete their question
 
 ---
@@ -45,30 +75,22 @@ Authenticated users can:
 
 Authenticated users can:
 
+- View Abailable question to answer
 - Post answers
 - Edit their own answers
 - Delete their own answers
 - Retrieve answers for a specific question
 - View accepted answers
+Question authors can:
+
+- Accept an answer
+- Change accepted answer
 
 ### Rules
 
 - Answer content cannot be empty
 - Only the answer author can edit/delete
 - Deleted answers cannot remain accepted
-
----
-
-## Accepted Answers
-
-Question authors can:
-
-- Accept an answer
-- Change accepted answer
-- Remove accepted answer
-
-### Rules
-
 - Only question owner can accept answers
 - Only one accepted answer per question
 - Users cannot accept their own answers
@@ -92,8 +114,11 @@ Users can:
 
 ---
 
-## Reputation System
+## UserProfile Reputation System
+ - User Profile Retrieval
+ -  Reputation Tracking
 
+- 
 Automatic reputation updates based on community actions.
 
 | Action | Reputation |

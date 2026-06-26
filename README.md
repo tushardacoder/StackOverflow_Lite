@@ -516,8 +516,118 @@ Updated View Count
 
 # Authentication
 
+```
+# Register API
+
+## Endpoint
+
 ```http
 POST /api/auth/register
+```
+
+---
+
+## Request Body
+
+```json
+{
+  "email": "tusharbasak041@gmail.com",
+  "password": "Tushar@041"
+}
+```
+
+---
+
+## Example cURL Request
+
+```bash
+curl -X POST "https://localhost:5001/api/auth/register" \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "tusharbasak041@gmail.com",
+  "password": "Tushar@041"
+}'
+```
+
+---
+
+## Success Response
+
+```json
+{
+  "message": "User registered successfully"
+}
+```
+
+---
+
+## Error Responses
+
+### Duplicate Email
+
+```json
+{
+  "message": "User with this email already exists"
+}
+```
+
+### Invalid Password
+
+```json
+{
+  "message": "Password does not meet security requirements"
+}
+```
+
+---
+
+# Password Policy (ASP.NET Identity)
+
+The password must follow these rules:
+
+* Minimum **8 characters**
+* At least one uppercase letter (`A-Z`)
+* At least one lowercase letter (`a-z`)
+* At least one number (`0-9`)
+* At least one special character (`@`, `#`, `!`, etc.)
+
+---
+
+## Example Valid Passwords
+
+```text
+Tushar@041
+Admin#2026
+SecurePass1!
+```
+
+---
+
+## Example Invalid Passwords
+
+```text
+tushar041      // No uppercase & special character
+TUSHAR@041     // No lowercase letter
+TusharPassword // No number & special character
+12345678       // Weak password
+```
+
+---
+
+## ASP.NET Identity Configuration
+
+```csharp
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequiredUniqueChars = 1;
+});
+```
+
 POST /api/auth/login
 ```
 

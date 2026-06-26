@@ -234,20 +234,134 @@ Controllers remain thin and delegate logic inward.
 ---
 
 # Redis Integration
+# Redis Cache & View Tracking
 
-Redis is used in two meaningful scenarios:
+This project uses Redis for both caching and real-time analytics.
 
-## 1. Question View Tracking
+---
 
-Tracks how many times a question has been viewed.
+# Redis Connection
 
-### Redis Keys
+Redis runs inside Docker using the official Redis image.
 
-```text
-question:views:{questionId}
+## Docker Compose Configuration
+
+```yaml
+redis:
+
+  image: redis:7
+
+  container_name: stackoverflow_redis
+
+  ports:
+    - "6379:6379"
 ```
 
-Example:
+---
+
+# Application Redis Connection
+
+## appsettings.json
+
+```json
+{
+  "Redis": {
+    "ConnectionString": "redis:6379"
+  }
+}
+```
+
+---
+
+# Redis Service Registration
+
+```csharp
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Redis:ConnectionString"];
+});
+```
+
+---
+
+# Redis Insight
+
+Redis Insight is used to monitor and inspect Redis data visually.
+
+## Redis Insight Connection
+
+| Setting | Value |
+|---|---|
+| Host | localhost |
+| Port | 6379 |
+
+---
+
+# Redis Cache: Question Details
+
+Question details are cached in Redis for faster retrieval.
+
+## Redis Key
+
+```text
+question:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44
+```
+
+---
+
+## Cached JSON Data
+
+```json
+{
+  "QuestionId": "a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44",
+  "Title": "string",
+  "Description": "string",
+  "TagName": "string",
+  "AcceptedAnswer": false,
+  "CreatedAt": "2026-06-25T09:43:52.410205Z"
+}
+```
+
+---
+
+## Cache Expiration
+
+Question cache expires after:
+
+```text
+10 minutes
+```
+
+---
+
+## Example Cache Logic
+
+```csharp
+await _distributedCache.SetStringAsync(
+    $"question:{question.QuestionId}",
+    json,
+    new DistributedCacheEntryOptions
+    {
+        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+    });
+```
+
+---
+
+## Purpose of Cache
+
+- Faster question retrieval
+- Reduced PostgreSQL queries
+- Improved API performance
+- Reduced database load
+
+---
+
+# Redis View Tracking
+
+Redis also tracks question views in real time.
+
+## Redis View Key
 
 ```text
 question:views:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44
@@ -255,20 +369,120 @@ question:views:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44
 
 ---
 
-## 2. Question Caching
-
-Question details are cached to improve read performance.
-
-### Redis Keys
+## Example Value
 
 ```text
-question:{questionId}
+4
 ```
 
-Example:
+Meaning:
+
+- The question has been viewed 4 times.
+
+---
+
+## View Counter Behavior
+
+- No expiration time
+- Persistent counter
+- Incremented every time question details are opened
+
+---
+
+## Example View Tracking Logic
+
+```csharp
+await _redisDatabase.StringIncrementAsync(
+    $"question:views:{questionId}");
+```
+
+---
+
+# Why Redis For Views?
+
+Redis is ideal for counters because:
+
+- Extremely fast
+- In-memory operations
+- Atomic increments
+- Handles high traffic efficiently
+
+---
+
+# Redis Keys Inside Redis Insight
+
+## Question Cache Key
 
 ```text
 question:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44
+```
+
+### Type
+
+```text
+String
+```
+
+### TTL
+
+```text
+600 seconds
+```
+
+(10 minutes)
+
+---
+
+## Question View Counter Key
+
+```text
+question:views:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44
+```
+
+### Type
+
+```text
+String
+```
+
+### TTL
+
+```text
+No Expiration
+```
+
+---
+
+# Cache Flow
+
+```text
+Client Request
+      ↓
+Check Redis Cache
+      ↓
+Cache Hit → Return Cached Data
+      ↓
+Cache Miss
+      ↓
+Fetch From PostgreSQL
+      ↓
+Store In Redis (10 min)
+      ↓
+Return Response
+```
+
+---
+
+# View Tracking Flow
+
+```text
+Question Opened
+      ↓
+Redis String Increment
+      ↓
+question:views:{questionId}
+      ↓
+Updated View Count
 ```
 
 ---
@@ -572,15 +786,7 @@ Improves performance for frequently accessed question data.
 - Unit & Integration Testing
 - CI/CD Pipeline
 
----
 
-# Example Redis Data
-
-```text
-question:views:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44 -> 3
-
-question:a0ad97f3-cdec-4a7d-b1b9-7ecea0fdea44
-```
 
 ---
 

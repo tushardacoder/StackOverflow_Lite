@@ -1169,7 +1169,7 @@ curl -X 'GET' \
 
 ## `PUT /api/answers/accept-answer`
 
-Accept an answer for a question and Question owner can accept this answer
+Accept an answer for a question and only Question owner can accept this answer
 
 ### Authorization
 

@@ -859,7 +859,7 @@ transfer-encoding: chunked
 dotnet ef migrations add InitTeamModule --project Stackoverflow.Infrastructure --startup-project Stackoverflow.Host --context Stackoverflow.Infrastructure.Data.ApplicationDbContext --output-dir Data/Migrations
 ```
 
----
+
 
 # Docker Support
 
